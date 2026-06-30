@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fragrance Mission — Scent as Signal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="grain"></div>
+
+<!-- ===== NAVBAR ===== -->
+<nav id="navbar">
+  <a href="#home" class="brand" data-view="home">
+    <span class="mark"></span>
+    <span>Fragrance Mission<small>HOUSE OF SIGNAL SCENTS</small></span>
+  </a>
+
+  <button class="menu-toggle" id="menuToggle">
+    <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+
+  <div class="nav-links" id="navLinks">
+    <a href="#home"  data-view="home"  class="active">Home</a>
+    <a href="#shop"  data-view="shop">Shop</a>
+    <a href="#quiz"  data-view="quiz">Fragrance Quiz</a>
+    <a href="/admin">Admin Dashboard</a>
+  </div>
+
+  <div class="nav-actions">
+    <!-- Profile -->
+    <div class="dropdown-wrap">
+      <button class="icon-btn" id="profileBtn">
+        <svg viewBox="0 0 24 24"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+      </button>
+      <div class="dropdown glass-strong" id="profileDropdown">
+        <h4>Account</h4>
+        <div class="profile-item">✺&nbsp; My Profile</div>
+        <div class="profile-item">✺&nbsp; Order History</div>
+        <div class="profile-item">✺&nbsp; Scent Preferences</div>
+        <div class="profile-item">✺&nbsp; Sign Out</div>
+      </div>
+    </div>
+    <!-- Cart -->
+    <div class="dropdown-wrap">
+      <button class="icon-btn" id="cartBtn">
+        <svg viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l3-8H6.4M7 13L5.4 5M7 13l-2 5h13"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <div class="dropdown glass-strong" id="cartDropdown">
+        <h4>Your Bag</h4>
+        <div id="cartItemsWrap"><div class="cart-empty">Your bag is empty.</div></div>
+        <div id="cartTotalWrap"></div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HOME VIEW ===== -->
+<div class="view active" id="home-view">
+
+  <!-- Hero -->
+  <section id="hero">
+    <div class="blob blob1"></div><div class="blob blob2"></div><div class="blob blob3"></div>
+    <div class="hero-content">
+      <div class="eyebrow"><span class="line"></span> THE MISSION COLLECTIVE <span class="line"></span></div>
+      <h1 class="hero-title">Wear the<br/>Signal</h1>
+      <p class="hero-sub">Fragrance Mission exists to track down the rarest accords on earth — oud cellars in Cambodia, vanilla vines in Madagascar, amber resin aged in silence — and deliver them in fifteen uncompromising formulas. No filler. No noise. Only frequency.</p>
+      <div class="hero-actions">
+        <a href="#shop" data-view="shop" class="btn btn-gold">Explore Scents</a>
+        <a href="#quiz" data-view="quiz" class="btn btn-ghost">Take the Quiz</a>
+      </div>
+    </div>
+    <div class="scroll-cue"><span>Scroll</span><span class="stick"></span></div>
+  </section>
+
+  <!-- Mission -->
+  <section class="section">
+    <div class="mission-grid">
+      <div class="reveal">
+        <span class="eyebrow">Our Mission</span>
+        <h2 class="section-title" style="margin-top:16px;">We don't sell perfume.<br/>We deploy <em>mood</em>.</h2>
+        <p class="section-desc">Every Fragrance Mission formula is composed by master perfumers and aged for a minimum of eight weeks before bottling. We curate for vibration, not volume — fifteen scents, built to outlast trend cycles and announce a presence before a word is spoken.</p>
+        <div class="mission-stats">
+          <div class="glass stat-card"><div class="num">15</div><div class="lbl">Signature Formulas</div></div>
+          <div class="glass stat-card"><div class="num">8wk</div><div class="lbl">Min. Maceration</div></div>
+          <div class="glass stat-card"><div class="num">42</div><div class="lbl">Rare Raw Materials</div></div>
+          <div class="glass stat-card"><div class="num">100%</div><div class="lbl">Independently Composed</div></div>
+        </div>
+      </div>
+      <div class="mission-visual reveal">
+        <div class="glow-ring"></div>
+        <svg viewBox="0 0 100 160" fill="none">
+          <defs><linearGradient id="bv" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ecc874"/><stop offset="100%" stop-color="#8a6a3a"/></linearGradient></defs>
+          <rect x="38" y="8"  width="24" height="18" rx="4" fill="url(#bv)"/>
+          <rect x="44" y="0"  width="12" height="10" rx="2" fill="#ecc874"/>
+          <path d="M30 26h40c4 0 6 3 6 7v100c0 14-11 23-26 23h0c-15 0-26-9-26-23V33c0-4 2-7 6-7z" fill="none" stroke="url(#bv)" stroke-width="2"/>
+          <path d="M30 26h40c4 0 6 3 6 7v100c0 14-11 23-26 23h0c-15 0-26-9-26-23V33c0-4 2-7 6-7z" fill="#1c1812" opacity="0.55"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pillars -->
+  <section class="section" style="padding-top:0;">
+    <div class="divider"></div>
+    <div class="section-head reveal">
+      <span class="eyebrow">Olfactory Pillars</span>
+      <h2 class="section-title">Four families. <em>One frequency.</em></h2>
+      <p class="section-desc">Every Fragrance Mission scent is rooted in one of four dominant accords.</p>
+    </div>
+    <div class="notes-row" id="pillarsRow"></div>
+  </section>
+
+  <!-- Featured -->
+  <section class="section" style="padding-top:0;">
+    <div class="divider"></div>
+    <div class="section-head reveal" style="display:flex;align-items:flex-end;justify-content:space-between;width:100%;max-width:none;flex-wrap:wrap;gap:20px;">
+      <div>
+        <span class="eyebrow">Featured</span>
+        <h2 class="section-title">The current <em>rotation</em></h2>
+      </div>
+      <a href="#shop" data-view="shop" class="btn btn-ghost btn-sm">View Full Collection</a>
+    </div>
+    <div class="shop-grid reveal" id="featuredGrid">
+      <div class="loading-state">Loading collection…</div>
+    </div>
+  </section>
+
+</div><!-- /home-view -->
+
+<!-- ===== SHOP VIEW ===== -->
+<div class="view" id="shop-view">
+  <section class="section" style="padding-top:150px;">
+    <div class="section-head">
+      <span class="eyebrow">The Collection</span>
+      <h2 class="section-title">Fifteen formulas. <em>Zero compromise.</em></h2>
+      <p class="section-desc">Filter by dominant note to find your frequency.</p>
+    </div>
+    <div class="filter-bar" id="filterBar"></div>
+    <div class="shop-grid" id="shopGrid"><div class="loading-state">Loading collection…</div></div>
+  </section>
+</div>
+
+<!-- ===== QUIZ VIEW ===== -->
+<div class="view" id="quiz-view">
+  <section class="section">
+    <div class="quiz-shell">
+      <div class="quiz-card glass-strong">
+
+        <div class="quiz-progress" id="quizProgress">
+          <span class="active" data-i="0"><i></i></span>
+          <span data-i="1"><i></i></span>
+          <span data-i="2"><i></i></span>
+        </div>
+
+        <!-- Step 0 -->
+        <div class="q-step active" data-step="0">
+          <div class="q-eyebrow">Question 01 / 03</div>
+          <div class="q-question">What's your dominant vibe?</div>
+          <div class="q-options" data-q="0">
+            <button class="q-opt" data-val="bold">Mysterious &amp; Bold<span class="sub">Smoke, oud, dark woods</span></button>
+            <button class="q-opt" data-val="fresh">Fresh &amp; Confident<span class="sub">Citrus, sea air, clean lines</span></button>
+            <button class="q-opt" data-val="sensual">Warm &amp; Sensual<span class="sub">Vanilla, skin musk, amber</span></button>
+            <button class="q-opt" data-val="refined">Refined &amp; Classic<span class="sub">Iris, suede, quiet luxury</span></button>
+          </div>
+        </div>
+        <!-- Step 1 -->
+        <div class="q-step" data-step="1">
+          <div class="q-eyebrow">Question 02 / 03</div>
+          <div class="q-question">Where will you wear this?</div>
+          <div class="q-options" data-q="1">
+            <button class="q-opt" data-val="evening">Evening Events<span class="sub">Galas, dinners, late nights</span></button>
+            <button class="q-opt" data-val="office">Daily Office<span class="sub">Boardrooms, focus, presence</span></button>
+            <button class="q-opt" data-val="date">Date Night<span class="sub">Close range, memorable</span></button>
+            <button class="q-opt" data-val="travel">Travel &amp; Adventure<span class="sub">Versatile, all-climate</span></button>
+          </div>
+        </div>
+        <!-- Step 2 -->
+        <div class="q-step" data-step="2">
+          <div class="q-eyebrow">Question 03 / 03</div>
+          <div class="q-question">Pick your signature note.</div>
+          <div class="q-options" data-q="2">
+            <button class="q-opt" data-val="Oud & Wood">Oud &amp; Wood<span class="sub">Deep, resinous, grounded</span></button>
+            <button class="q-opt" data-val="Citrus & Fresh">Citrus &amp; Fresh<span class="sub">Bright, sparkling, clean</span></button>
+            <button class="q-opt" data-val="Vanilla">Vanilla<span class="sub">Creamy, warm, addictive</span></button>
+            <button class="q-opt" data-val="Amber & Spice">Amber &amp; Spice<span class="sub">Golden, spiced, magnetic</span></button>
+          </div>
+        </div>
+        <!-- Step 3 — result injected by JS -->
+        <div class="q-step" data-step="3">
+          <div class="q-result" id="quizResultWrap"></div>
+        </div>
+
+        <div class="q-nav" id="quizNav">
+          <button class="btn btn-ghost btn-sm" id="quizBack" style="visibility:hidden;">Back</button>
+          <button class="btn btn-ghost btn-sm" id="quizRestart" style="display:none;">Restart Quiz</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <h4>Fragrance Mission</h4>
+      <p>An independent fragrance house composing rare, high-vibration scents for people on a mission of their own. Based in nowhere. Worn everywhere.</p>
+    </div>
+    <div>
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="#shop" data-view="shop">All Scents</a></li>
+        <li><a href="#quiz" data-view="quiz">Fragrance Quiz</a></li>
+        <li><a href="#shop" data-view="shop">Gift Sets</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>House</h4>
+      <ul>
+        <li><a href="#home" data-view="home">Our Mission</a></li>
+        <li><a href="#">Journal</a></li>
+        <li><a href="#">Sourcing</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Support</h4>
+      <ul>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Shipping</a></li>
+        <li><a href="/admin">Admin</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Fragrance Mission. All rights reserved.</span>
+    <span>Composed with restraint. Worn without it.</span>
+  </div>
+</footer>
+
+<div id="global-toast" class="glass-strong"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

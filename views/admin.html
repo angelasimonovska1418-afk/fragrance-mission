@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin — Fragrance Mission</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/adminstyle.css">
+</head>
+<body>
+<div class="grain"></div>
+
+<!-- ===== MOBILE SIDEBAR TOGGLE ===== -->
+<button id="sidebarToggle"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+
+<!-- ===== SIDEBAR ===== -->
+<aside id="sidebar">
+  <div class="sb-brand">
+    <span class="mark"></span>
+    <div>
+      <div class="title">Fragrance Mission</div>
+      <small>ADMIN CONSOLE</small>
+    </div>
+  </div>
+
+  <nav class="sb-nav">
+    <span class="sb-section-label">Overview</span>
+    <div class="sb-item active" data-section="dashboard">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </div>
+
+    <span class="sb-section-label">Catalog</span>
+    <div class="sb-item" data-section="add">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Add Perfume
+    </div>
+    <div class="sb-item" data-section="manage">
+      <svg viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg>
+      Manage Catalog
+    </div>
+
+    <span class="sb-section-label">Session</span>
+    <a class="sb-back" href="/" style="margin-bottom:8px;">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Back to Storefront
+    </a>
+    <button class="sb-back" id="logoutBtn" style="cursor:pointer;border:1px solid rgba(192,88,74,0.3);color:#c0584a;">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign Out
+    </button>
+  </nav>
+</aside>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main id="main-content">
+
+  <!-- DASHBOARD -->
+  <div class="admin-section active" id="section-dashboard">
+    <div class="page-header">
+      <span class="page-eyebrow">Overview</span>
+      <h1 class="page-title">Admin <em>Dashboard</em></h1>
+    </div>
+    <div class="stats-row">
+      <div class="glass stat-card">
+        <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg></div>
+        <div><div class="stat-num" id="statProducts">—</div><div class="stat-lbl">Total Products</div><div class="stat-trend" id="statProductsTrend"></div></div>
+      </div>
+      <div class="glass stat-card">
+        <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/></svg></div>
+        <div><div class="stat-num" id="statSales">—</div><div class="stat-lbl">Total Sales</div><div class="stat-trend">↑ 12% this month</div></div>
+      </div>
+      <div class="glass stat-card">
+        <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div><div class="stat-num" id="statUsers">3,482</div><div class="stat-lbl">Active Users</div><div class="stat-trend">↑ 8% this month</div></div>
+      </div>
+    </div>
+    <div class="glass panel">
+      <div class="panel-head"><h3>Products by Category</h3></div>
+      <div class="chart-row" id="categoryChart"><div style="color:var(--muted-dim);font-size:13px;">Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- ADD / EDIT PERFUME -->
+  <div class="admin-section" id="section-add">
+    <div class="page-header">
+      <span class="page-eyebrow">Catalog</span>
+      <h1 class="page-title" id="formPageTitle">Add New <em>Perfume</em></h1>
+    </div>
+    <div class="glass panel">
+      <div class="panel-head">
+        <h3 id="formPanelTitle">New Formula</h3>
+        <button class="btn btn-ghost btn-sm" id="cancelEditBtn" style="display:none;">
+          <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          Cancel Edit
+        </button>
+      </div>
+      <form id="perfumeForm">
+        <div class="form-grid">
+          <div class="field">
+            <label>Title *</label>
+            <input type="text" id="f-title" placeholder="e.g. Noir Vanille Mission" required>
+          </div>
+          <div class="field">
+            <label>Brand *</label>
+            <input type="text" id="f-brand" placeholder="e.g. Fragrance Mission" required>
+          </div>
+          <div class="field">
+            <label>Price (USD) *</label>
+            <input type="number" id="f-price" min="0" step="1" placeholder="245" required>
+          </div>
+          <div class="field">
+            <label>Category *</label>
+            <select id="f-tag" required>
+              <option value="">Select category…</option>
+              <option value="Vanilla">Vanilla</option>
+              <option value="Oud & Wood">Oud &amp; Wood</option>
+              <option value="Citrus & Fresh">Citrus &amp; Fresh</option>
+              <option value="Amber & Spice">Amber &amp; Spice</option>
+              <option value="Floral">Floral</option>
+              <option value="Leather">Leather</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label>Main Notes *</label>
+            <input type="text" id="f-notes" placeholder="e.g. Black vanilla, tonka bean, tobacco leaf" required>
+            <span class="hint">Separate with commas</span>
+          </div>
+          <div class="field full">
+            <label>Description *</label>
+            <textarea id="f-desc" placeholder="Short luxury description of this formula…" required></textarea>
+          </div>
+          <div class="field full">
+            <label>Image URL</label>
+            <input type="text" id="f-img" placeholder="https://images.unsplash.com/...">
+            <span class="hint">Leave blank to use the default bottle image</span>
+          </div>
+          <div class="field" style="flex-direction:row;align-items:center;gap:12px;padding-top:10px;">
+            <input type="checkbox" id="f-featured" style="width:16px;height:16px;accent-color:var(--gold);cursor:pointer;">
+            <label for="f-featured" style="text-transform:none;letter-spacing:0;font-size:13px;cursor:pointer;color:var(--ivory);">
+              Mark as Featured (shown on homepage rotation)
+            </label>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-gold" id="submitBtn">
+            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            <span id="submitBtnLabel">Add Perfume</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MANAGE CATALOG -->
+  <div class="admin-section" id="section-manage">
+    <div class="page-header">
+      <span class="page-eyebrow">Catalog</span>
+      <h1 class="page-title">Manage <em>Collection</em></h1>
+    </div>
+    <div class="glass panel" style="padding:0;overflow:hidden;">
+      <div class="panel-head" style="padding:24px 28px 20px;">
+        <h3>All Perfumes</h3>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input id="searchInput" type="text" placeholder="Search catalog…"
+            style="padding:9px 14px;border-radius:999px;border:1px solid var(--glass-border);background:var(--glass-bg);color:var(--ivory);font-size:12.5px;font-family:inherit;width:200px;transition:border-color .3s;"
+            onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--glass-border)'">
+          <button class="btn btn-gold btn-sm" onclick="goToSection('add')">
+            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Add New
+          </button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Featured</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="catalogTable">
+            <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted-dim);">Loading catalog…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div id="toast" class="glass-strong"></div>
+
+<script src="/adminscript.js"></script>
+</body>
+</html>
