@@ -12,13 +12,10 @@ const requireAdmin   = require("./middleware/requireAdmin");
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
-
-// Railway uses MONGO_URL, Atlas uses MONGODB_URI — check both
 const MONGO = process.env.MONGODB_URI
            || process.env.MONGO_URL
            || "mongodb://localhost:27017/fragrance_mission";
 
-/* ── Middleware ─────────────────────────────────────────────── */
 app.use(cors({ origin: false }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -33,34 +30,33 @@ app.use(session({
   },
 }));
 
-/* ── Public routes ──────────────────────────────────────────── */
-app.use("/api/auth", authRouter);
+// Public
+app.use("/api/auth",     authRouter);
+app.use("/api/perfumes", perfumesRouter);  // GET public, POST/PUT/DELETE protected inside router
 
-/* ── Protected API ──────────────────────────────────────────── */
-app.use("/api/perfumes", requireAdmin, perfumesRouter);
-app.use("/api/stats",    requireAdmin, statsRouter);
+// Admin only
+app.use("/api/stats", requireAdmin, statsRouter);
 
-/* ── Protected admin HTML ───────────────────────────────────── */
+// Protected admin HTML
 app.get(["/admin", "/admin.html"], requireAdmin, (req, res) => {
   res.sendFile(path.join(__dirname, "views", "admin.html"));
 });
 
-/* ── Static files ───────────────────────────────────────────── */
+// Static frontend
 app.use(express.static(path.join(__dirname, "public")));
 
-/* ── SPA fallback ───────────────────────────────────────────── */
+// SPA fallback
 app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-/* ── Connect MongoDB → start ────────────────────────────────── */
 mongoose
   .connect(MONGO)
   .then(() => {
     console.log("✓ MongoDB connected");
     app.listen(PORT, () => console.log(`✓ Server → http://localhost:${PORT}`));
   })
-  .catch((err) => {
+  .catch(err => {
     console.error("✗ MongoDB failed:", err.message);
     process.exit(1);
   });

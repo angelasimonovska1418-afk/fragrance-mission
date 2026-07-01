@@ -1,8 +1,10 @@
-const express = require("express");
-const router  = express.Router();
-const Perfume = require("../models/Perfume");
+const express  = require("express");
+const router   = express.Router();
+const Perfume  = require("../models/Perfume");
+const requireAdmin = require("../middleware/requireAdmin");
 
-// GET /api/perfumes  — supports ?tag=&search=&featured=true
+// ── PUBLIC ───────────────────────────────────────────────────
+// GET /api/perfumes  — anyone can read the catalog
 router.get("/", async (req, res) => {
   try {
     const filter = {};
@@ -19,7 +21,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET /api/perfumes/:id
+// GET /api/perfumes/:id — anyone can read a single perfume
 router.get("/:id", async (req, res) => {
   try {
     const p = await Perfume.findById(req.params.id);
@@ -30,38 +32,38 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// ── ADMIN ONLY ───────────────────────────────────────────────
 // POST /api/perfumes
-router.post("/", async (req, res) => {
+router.post("/", requireAdmin, async (req, res) => {
   try {
     const p = await Perfume.create(req.body);
     res.status(201).json(p);
   } catch (err) {
     const errors = err.errors
-      ? Object.values(err.errors).map((e) => e.message)
+      ? Object.values(err.errors).map(e => e.message)
       : [err.message];
     res.status(400).json({ errors });
   }
 });
 
 // PUT /api/perfumes/:id
-router.put("/:id", async (req, res) => {
+router.put("/:id", requireAdmin, async (req, res) => {
   try {
     const p = await Perfume.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
+      new: true, runValidators: true,
     });
     if (!p) return res.status(404).json({ error: "Not found." });
     res.json(p);
   } catch (err) {
     const errors = err.errors
-      ? Object.values(err.errors).map((e) => e.message)
+      ? Object.values(err.errors).map(e => e.message)
       : [err.message];
     res.status(400).json({ errors });
   }
 });
 
 // DELETE /api/perfumes/:id
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", requireAdmin, async (req, res) => {
   try {
     const p = await Perfume.findByIdAndDelete(req.params.id);
     if (!p) return res.status(404).json({ error: "Not found." });
