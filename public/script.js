@@ -355,3 +355,184 @@ renderFeatured();
 renderCart();
 observeReveals();
 setActiveNav("home");
+
+/* ============================================================
+   USER AUTHENTICATION — Register / Login / Logout
+   ============================================================ */
+
+let currentUser = null;
+
+/* ── Check if user already logged in ───────────────────────── */
+async function checkUserSession() {
+  try {
+    const res = await fetch("/api/auth/user-check");
+    if (res.ok) {
+      const data = await res.json();
+      currentUser = data.user;
+    } else {
+      currentUser = null;
+    }
+  } catch {
+    currentUser = null;
+  }
+  renderAuthNav();
+}
+
+/* ── Render navbar auth area ────────────────────────────────── */
+function renderAuthNav() {
+  const area = document.getElementById("authNavArea");
+  if (!area) return;
+  if (currentUser) {
+    const initial = currentUser.name.charAt(0).toUpperCase();
+    area.innerHTML = `
+      <div class="dropdown-wrap">
+        <div class="user-pill" id="userPillBtn">
+          <div class="ua">${initial}</div>
+          <span>${currentUser.name.split(" ")[0]}</span>
+        </div>
+        <div class="dropdown glass-strong" id="userDropdown">
+          <h4>My Account</h4>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">${currentUser.email}</div>
+          <div class="profile-item" id="userLogoutBtn">✺&nbsp; Sign Out</div>
+        </div>
+      </div>`;
+    document.getElementById("userPillBtn").addEventListener("click", e => {
+      e.stopPropagation();
+      toggleDD("#userDropdown");
+    });
+    document.getElementById("userLogoutBtn").addEventListener("click", userLogout);
+  } else {
+    area.innerHTML = `
+      <button class="icon-btn" id="openAuthBtn">
+        <svg viewBox="0 0 24 24"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+      </button>`;
+    document.getElementById("openAuthBtn").addEventListener("click", e => {
+      e.stopPropagation();
+      openModal("login");
+    });
+  }
+}
+
+/* ── Modal open/close ───────────────────────────────────────── */
+function openModal(tab = "login") {
+  document.getElementById("authModal").classList.add("open");
+  switchTab(tab);
+  clearModalErrors();
+}
+function closeModal() {
+  document.getElementById("authModal").classList.remove("open");
+  clearModalErrors();
+}
+function clearModalErrors() {
+  ["loginError","registerError","registerSuccess"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove("show"); el.textContent = ""; }
+  });
+}
+function switchTab(tab) {
+  document.querySelectorAll(".modal-tab").forEach(t =>
+    t.classList.toggle("active", t.dataset.tab === tab)
+  );
+  document.querySelectorAll(".modal-form").forEach(f => f.classList.remove("active"));
+  document.getElementById(tab + "Form")?.classList.add("active");
+}
+
+document.getElementById("modalClose")?.addEventListener("click", closeModal);
+document.getElementById("authModal")?.addEventListener("click", e => {
+  if (e.target === document.getElementById("authModal")) closeModal();
+});
+document.querySelectorAll(".modal-tab").forEach(tab =>
+  tab.addEventListener("click", () => switchTab(tab.dataset.tab))
+);
+
+/* ── LOGIN ──────────────────────────────────────────────────── */
+document.getElementById("loginSubmit")?.addEventListener("click", async () => {
+  const email    = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  const errEl    = document.getElementById("loginError");
+  const btn      = document.getElementById("loginSubmit");
+
+  if (!email || !password) {
+    errEl.textContent = "Please fill in all fields.";
+    errEl.classList.add("show"); return;
+  }
+  btn.disabled = true; btn.textContent = "Signing in…";
+
+  try {
+    const res  = await fetch("/api/auth/user-login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      errEl.textContent = data.error || "Login failed.";
+      errEl.classList.add("show");
+    } else {
+      currentUser = data.user;
+      renderAuthNav();
+      closeModal();
+      showToast(`Welcome back, ${data.user.name}!`);
+    }
+  } catch {
+    errEl.textContent = "Network error — try again.";
+    errEl.classList.add("show");
+  } finally {
+    btn.disabled = false; btn.textContent = "Sign In";
+  }
+});
+
+/* ── REGISTER ───────────────────────────────────────────────── */
+document.getElementById("registerSubmit")?.addEventListener("click", async () => {
+  const name     = document.getElementById("regName").value.trim();
+  const email    = document.getElementById("regEmail").value.trim();
+  const password = document.getElementById("regPassword").value;
+  const errEl    = document.getElementById("registerError");
+  const sucEl    = document.getElementById("registerSuccess");
+  const btn      = document.getElementById("registerSubmit");
+
+  errEl.classList.remove("show");
+  if (!name || !email || !password) {
+    errEl.textContent = "Please fill in all fields.";
+    errEl.classList.add("show"); return;
+  }
+  if (password.length < 6) {
+    errEl.textContent = "Password must be at least 6 characters.";
+    errEl.classList.add("show"); return;
+  }
+  btn.disabled = true; btn.textContent = "Creating account…";
+
+  try {
+    const res  = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      errEl.textContent = data.error || "Registration failed.";
+      errEl.classList.add("show");
+    } else {
+      currentUser = data.user;
+      renderAuthNav();
+      sucEl.classList.add("show");
+      setTimeout(() => { closeModal(); showToast(`Welcome, ${data.user.name}!`); }, 1500);
+    }
+  } catch {
+    errEl.textContent = "Network error — try again.";
+    errEl.classList.add("show");
+  } finally {
+    btn.disabled = false; btn.textContent = "Create Account";
+  }
+});
+
+/* ── USER LOGOUT ────────────────────────────────────────────── */
+async function userLogout() {
+  await fetch("/api/auth/user-logout", { method: "POST" }).catch(() => {});
+  currentUser = null;
+  renderAuthNav();
+  showToast("Signed out successfully");
+}
+
+/* ── Init auth ──────────────────────────────────────────────── */
+checkUserSession();

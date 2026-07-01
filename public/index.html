@@ -30,18 +30,9 @@
   </div>
 
   <div class="nav-actions">
-    <!-- Profile -->
-    <div class="dropdown-wrap">
-      <button class="icon-btn" id="profileBtn">
-        <svg viewBox="0 0 24 24"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
-      </button>
-      <div class="dropdown glass-strong" id="profileDropdown">
-        <h4>Account</h4>
-        <div class="profile-item">✺&nbsp; My Profile</div>
-        <div class="profile-item">✺&nbsp; Order History</div>
-        <div class="profile-item">✺&nbsp; Scent Preferences</div>
-        <div class="profile-item">✺&nbsp; Sign Out</div>
-      </div>
+    <!-- Profile / Auth -->
+    <div id="authNavArea">
+      <!-- filled by JS -->
     </div>
     <!-- Cart -->
     <div class="dropdown-wrap">
@@ -241,6 +232,42 @@
 </footer>
 
 <div id="global-toast" class="glass-strong"></div>
+
+
+<!-- ===== AUTH MODAL ===== -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <button class="modal-close" id="modalClose">
+      <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="modal-brand">
+      <span class="mark"></span>
+      <span>Fragrance Mission</span>
+    </div>
+    <div class="modal-tabs">
+      <div class="modal-tab active" data-tab="login">Sign In</div>
+      <div class="modal-tab" data-tab="register">Create Account</div>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="modal-form active" id="loginForm">
+      <div class="modal-error" id="loginError"></div>
+      <div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="your@email.com"></div>
+      <div class="field"><label>Password</label><input type="password" id="loginPassword" placeholder="Your password"></div>
+      <button class="btn-modal" id="loginSubmit">Sign In</button>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="modal-form" id="registerForm">
+      <div class="modal-error" id="registerError"></div>
+      <div class="modal-success" id="registerSuccess">Account created! Welcome to Fragrance Mission.</div>
+      <div class="field"><label>Full Name</label><input type="text" id="regName" placeholder="Angela Simonovska"></div>
+      <div class="field"><label>Email</label><input type="email" id="regEmail" placeholder="your@email.com"></div>
+      <div class="field"><label>Password</label><input type="password" id="regPassword" placeholder="Min. 6 characters"></div>
+      <button class="btn-modal" id="registerSubmit">Create Account</button>
+    </div>
+  </div>
+</div>
 
 <script src="script.js"></script>
 </body>
