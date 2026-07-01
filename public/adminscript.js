@@ -1,6 +1,5 @@
 /* ============================================================
    FRAGRANCE MISSION — adminscript.js
-   Protected admin dashboard — session-based auth via Express
    ============================================================ */
 
 const API = "/api";
@@ -20,16 +19,17 @@ document.getElementById("logoutBtn")?.addEventListener("click", async () => {
 /* ── API helpers ────────────────────────────────────────────── */
 async function apiFetch(path, opts = {}) {
   const res  = await fetch(API + path, opts);
-  if (res.status === 401) { window.location.href = "/admin-login.html"; return; }
+  if (res.status === 401) { window.location.href = "/admin-login.html"; return null; }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error((data.errors || [data.error || "Request failed"]).join(" "));
   return data;
 }
-const getPerfumes = (q = "")  => apiFetch("/perfumes" + (q ? `?search=${encodeURIComponent(q)}` : ""));
-const getStats    = ()         => apiFetch("/stats");
-const createP     = (d)        => apiFetch("/perfumes", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(d) });
-const updateP     = (id, d)    => apiFetch(`/perfumes/${id}`, { method:"PUT",  headers:{"Content-Type":"application/json"}, body:JSON.stringify(d) });
-const deleteP     = (id)       => apiFetch(`/perfumes/${id}`, { method:"DELETE" });
+
+const getPerfumes = (q = "") => apiFetch("/perfumes" + (q ? `?search=${encodeURIComponent(q)}` : ""));
+const getStats    = ()        => apiFetch("/stats");
+const createP     = (d)       => apiFetch("/perfumes", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(d) });
+const updateP     = (id, d)   => apiFetch(`/perfumes/${id}`, { method:"PUT",  headers:{"Content-Type":"application/json"}, body:JSON.stringify(d) });
+const deleteP     = (id)      => apiFetch(`/perfumes/${id}`, { method:"DELETE" });
 
 /* ── Util ───────────────────────────────────────────────────── */
 const $ = (s, el = document) => el.querySelector(s);
@@ -96,7 +96,7 @@ async function loadDashboard() {
       <div class="chart-item">
         <span class="ci-label">${b._id}</span>
         <div class="ci-bar-wrap">
-          <div class="ci-bar" style="width:0%;background:${COLORS[b._id]||'#c9a227'};transition-delay:.1s;"></div>
+          <div class="ci-bar" style="width:0%;background:${COLORS[b._id]||'#c9a227'};"></div>
         </div>
         <span class="ci-val">${b.count}</span>
       </div>`).join("");
@@ -115,11 +115,12 @@ async function loadCatalog(query = "") {
   const tbody = $("#catalogTable");
   tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted-dim);">Loading…</td></tr>`;
   try {
-    allPerfumes = await getPerfumes(query);
-    if (!allPerfumes) return;
+    const list = await getPerfumes(query);
+    if (!list) return;
+    allPerfumes = list;
     renderTable(allPerfumes);
   } catch (err) {
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="6">Could not load catalog: ${err.message}</td></tr>`;
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="6">Could not load: ${err.message}</td></tr>`;
   }
 }
 
@@ -131,7 +132,7 @@ function renderTable(list) {
   }
   tbody.innerHTML = list.map(p => `
     <tr>
-      <td><img class="row-thumb" src="${p.img}" alt="${p.title}" onerror="this.style.opacity=0"></td>
+      <td><img class="row-thumb" src="${p.img}" alt="" onerror="this.style.opacity=0"></td>
       <td class="row-name">
         ${p.title}<br>
         <span style="font-size:11px;color:var(--muted);font-weight:400;">${p.brand}</span>
@@ -159,7 +160,6 @@ function renderTable(list) {
   );
 }
 
-/* live search */
 let searchTimer;
 $("#searchInput")?.addEventListener("input", e => {
   clearTimeout(searchTimer);
@@ -177,22 +177,28 @@ function resetForm() {
 }
 
 async function startEdit(id) {
-  const p = allPerfumes.find(pp => pp._id === id)
-         || await apiFetch(`/perfumes/${id}`).catch(() => null);
+  // First try from local cache, then fetch from API
+  let p = allPerfumes.find(pp => pp._id === id);
+  if (!p) {
+    p = await apiFetch(`/perfumes/${id}`).catch(() => null);
+  }
   if (!p) { toast("Perfume not found", true); return; }
+
   editingId = id;
-  $("#f-title").value    = p.title;
-  $("#f-brand").value    = p.brand;
-  $("#f-price").value    = p.price;
-  $("#f-tag").value      = p.tag;
-  $("#f-notes").value    = p.notes;
-  $("#f-desc").value     = p.desc;
-  $("#f-img").value      = p.img || "";
+  $("#f-title").value      = p.title    || "";
+  $("#f-brand").value      = p.brand    || "";
+  $("#f-price").value      = p.price    || "";
+  $("#f-tag").value        = p.tag      || "";
+  $("#f-notes").value      = p.notes    || "";
+  $("#f-desc").value       = p.desc     || "";
+  $("#f-img").value        = p.img      || "";
   $("#f-featured").checked = !!p.featured;
+
   $("#formPageTitle").innerHTML    = `Editing <em>${p.title}</em>`;
   $("#formPanelTitle").textContent = `Editing — ${p.title}`;
   $("#submitBtnLabel").textContent = "Save Changes";
   $("#cancelEditBtn").style.display = "inline-flex";
+
   goToSection("add");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -203,6 +209,7 @@ $("#perfumeForm")?.addEventListener("submit", async e => {
   e.preventDefault();
   const btn = $("#submitBtn");
   btn.disabled = true; btn.style.opacity = ".6";
+
   const payload = {
     title:    $("#f-title").value.trim(),
     brand:    $("#f-brand").value.trim(),
@@ -213,6 +220,7 @@ $("#perfumeForm")?.addEventListener("submit", async e => {
     img:      $("#f-img").value.trim() || undefined,
     featured: $("#f-featured").checked,
   };
+
   try {
     if (editingId) {
       await updateP(editingId, payload);
@@ -222,9 +230,10 @@ $("#perfumeForm")?.addEventListener("submit", async e => {
       toast(`"${payload.title}" added to catalog`);
     }
     resetForm();
+    await loadCatalog();
     goToSection("manage");
   } catch (err) {
-    toast(err.message || "Could not save perfume", true);
+    toast(err.message || "Could not save", true);
   } finally {
     btn.disabled = false; btn.style.opacity = "1";
   }
