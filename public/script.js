@@ -130,20 +130,68 @@ function renderCart() {
   badge.classList.toggle("show", qty>0);
   badge.classList.add("pulse");
   setTimeout(()=>badge.classList.remove("pulse"),450);
+
   if (!state.cart.length) {
     $("#cartItemsWrap").innerHTML = `<div class="cart-empty">Your bag is empty.</div>`;
-    $("#cartTotalWrap").innerHTML = ""; return;
+    $("#cartTotalWrap").innerHTML = "";
+    $("#cartPayWrap").innerHTML = "";
+    return;
   }
-  let total=0;
+
+  let total = 0;
   $("#cartItemsWrap").innerHTML = state.cart.map(c => {
-    total += c.price*c.qty;
+    total += c.price * c.qty;
     return `<div class="cart-item">
       <img src="${c.img}" alt="" onerror="this.style.display='none'">
-      <div style="flex:1"><div class="ci-name">${c.title}</div><div class="ci-meta">${money(c.price)} × ${c.qty}</div></div>
-      <button class="mini-btn" onclick="removeFromCart('${c.id}')"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      <div style="flex:1">
+        <div class="ci-name">${c.title}</div>
+        <div class="ci-meta">${money(c.price)}</div>
+      </div>
+      <div class="ci-qty-wrap">
+        <button class="ci-qty-btn" onclick="changeQty('${c.id}',-1)">−</button>
+        <span class="ci-qty-num">${c.qty}</span>
+        <button class="ci-qty-btn" onclick="changeQty('${c.id}',1)">+</button>
+        <button class="ci-remove" onclick="removeFromCart('${c.id}')" title="Remove">
+          <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
     </div>`;
   }).join("");
-  $("#cartTotalWrap").innerHTML = `<div class="cart-total"><span>Subtotal</span><span>${money(total)}</span></div>`;
+
+  $("#cartTotalWrap").innerHTML = `
+    <div class="cart-total">
+      <span>Subtotal</span>
+      <span>${money(total)}</span>
+    </div>`;
+
+  $("#cartPayWrap").innerHTML = `
+    <button class="btn-pay" onclick="handlePay()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+      Proceed to Payment
+    </button>`;
+}
+
+function changeQty(id, delta) {
+  const item = state.cart.find(c => c.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) state.cart = state.cart.filter(c => c.id !== id);
+  persistCart();
+  renderCart();
+}
+
+function handlePay() {
+  if (!currentUser) {
+    openAuthModal("login");
+    showToast("Please sign in to complete your purchase");
+    return;
+  }
+  const total = state.cart.reduce((s,c) => s + c.price*c.qty, 0);
+  showToast(`Order placed! Total: ${money(total)} ✦`);
+  state.cart = [];
+  persistCart();
+  renderCart();
+  document.querySelectorAll(".dropdown").forEach(d=>d.classList.remove("open"));
 }
 
 /* ── Pillars ────────────────────────────────────────────────── */
