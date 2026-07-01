@@ -16,23 +16,28 @@ const MONGO = process.env.MONGODB_URI
            || process.env.MONGO_URL
            || "mongodb://localhost:27017/fragrance_mission";
 
+// Trust Railway proxy so cookies work correctly
+app.set("trust proxy", 1);
+
 app.use(cors({ origin: false }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use(session({
   secret:            process.env.SESSION_SECRET || "dev-secret-change-me",
   resave:            false,
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure:   process.env.NODE_ENV === "production",
+    secure:   "auto",   // auto-detects HTTPS vs HTTP
+    sameSite: "lax",
     maxAge:   8 * 60 * 60 * 1000,
   },
 }));
 
 // Public
 app.use("/api/auth",     authRouter);
-app.use("/api/perfumes", perfumesRouter);  // GET public, POST/PUT/DELETE protected inside router
+app.use("/api/perfumes", perfumesRouter);
 
 // Admin only
 app.use("/api/stats", requireAdmin, statsRouter);
